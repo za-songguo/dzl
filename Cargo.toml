@@ -4,6 +4,7 @@ version = "0.1.0"
 authors = ["砸松果 <zasongguo@outlook.com>"]
 edition = "2021"
 license = "MPL-2.0"
+repository = "https://github.com/za-songguo/dzl"
 description = "A library for logging. It is simple and easy to use. It is also lightweight and has a few dependencies :)"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
