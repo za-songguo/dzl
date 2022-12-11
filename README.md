@@ -40,4 +40,4 @@ Output:
 # TODO
 
 - [ ] WASM (Console API) (0.3)
-- [ ] Better Error Handling
+- [x] Better Error Handling

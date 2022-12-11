@@ -18,7 +18,8 @@ pub enum Log {
 
 pub fn log(log: Log) -> Result<(), CustomError> {
     let config = Config::new().read()?;
-    if log.check_level(&config) {
+    let ok_level = log.check_level(&config)?;
+    if ok_level {
         let write_log_to_files = config.write_to_log_file().unwrap_or(false);
         if write_log_to_files {
             // Default: true
@@ -51,6 +52,8 @@ pub fn write_log(config: &Config, log: &Log) -> Result<(), CustomError> {
             .log_path()
             .expect("`log_path` must set with `write_log_to_files`"),
     );
+    // Write to the log file
+    // We checked it in`lib.rs`, check again here
     if let Ok(mut log_file) = log_file {
         log_file.push_str(&new_log_content);
         // Write the log to log file
@@ -79,7 +82,7 @@ pub fn print_log(log: &Log) -> Result<(), CustomError> {
     // Stderr or stdout (write_to_term())
     match log {
         Log::Error(l) => {
-            let mut stderr = StandardStream::stderr(ColorChoice::Always);
+            let mut stderr = StandardStream::stderr(ColorChoice::Auto);
             stderr.set_color(ColorSpec::new().set_fg(Some(color)))?;
             write!(&mut stderr, "{} ", OffsetDateTime::now_local().unwrap()).unwrap();
             write!(&mut stderr, "{} ", log.get_level()).unwrap();
@@ -97,7 +100,7 @@ pub fn print_log(log: &Log) -> Result<(), CustomError> {
 
 fn write_to_term(log: &Log, l: &String, custom_type: Option<&String>) -> Result<(), CustomError> {
     let color = log.get_color();
-    let mut stdout = StandardStream::stdout(ColorChoice::Always);
+    let mut stdout = StandardStream::stdout(ColorChoice::Auto);
     stdout.set_color(ColorSpec::new().set_fg(Some(color)))?;
     write!(&mut stdout, "{} ", OffsetDateTime::now_local().unwrap()).unwrap();
     if let Some(t) = custom_type {
@@ -134,12 +137,12 @@ impl Log {
     }
 
     /// true => print || write, false => do nothing
-    fn check_level(&self, config: &Config) -> bool {
-        let level = config.log_level();
+    fn check_level(&self, config: &Config) -> Result<bool, CustomError> {
+        let level = config.log_level()?;
         if let Some(level) = level {
-            level <= *self
+            Ok(level <= *self)
         } else {
-            true
+            Ok(true)
         }
     }
 }

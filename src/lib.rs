@@ -23,6 +23,7 @@
 //! log_path = "dzl.log" # This file needs to be created
 //! log_level = "debug" # Only logs greater than or equal to this level will be printed and written to the log file
 //! ```
+//!
 //! Output:
 //! ```
 //! 2022-12-03 11:30:55.23172315 +08:00:00 DEBUG Something...
@@ -46,6 +47,7 @@ pub fn init() -> Result<(), errors::CustomError> {
         let file = fs::File::open(&log_path);
         if file.is_err() && file.unwrap_err().kind() == ErrorKind::NotFound {
             // Create the log file if the file is not exists
+            println!("Log file was not created, creating...");
             fs::File::create(&log_path)?;
         }
     }

@@ -40,21 +40,19 @@ impl Config {
     pub fn log_path(&self) -> Option<String> {
         self.log_path.clone()
     }
-    pub fn log_level(&self) -> Option<Log> {
+    pub fn log_level(&self) -> Result<Option<Log>, CustomError> {
         if let Some(level) = &self.log_level {
             match level.as_str() {
-                "trace" => Some(Log::Trace("".into())),
-                "debug" => Some(Log::Debug("".into())),
-                "info" => Some(Log::Info("".into())),
-                "warn" => Some(Log::Warn("".into())),
-                "error" => Some(Log::Error("".into())),
-                "custom" => Some(Log::Custom("".into(), "".into())),
-                _ => {
-                    panic!("Unknown log level");
-                }
+                "trace" => Ok(Some(Log::Trace("".into()))),
+                "debug" => Ok(Some(Log::Debug("".into()))),
+                "info" => Ok(Some(Log::Info("".into()))),
+                "warn" => Ok(Some(Log::Warn("".into()))),
+                "error" => Ok(Some(Log::Error("".into()))),
+                "custom" => Ok(Some(Log::Custom("".into(), "".into()))),
+                _ => Err(CustomError::ParseError("Unknown log level".into())),
             }
         } else {
-            None
+            Ok(None)
         }
     }
     pub fn write_to_log_file(&self) -> Option<bool> {

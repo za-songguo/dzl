@@ -26,9 +26,13 @@ pub fn error<T: std::fmt::Display>(content: T) {
     handle_error(log::log(log::Log::Error(content.to_string())));
 }
 
+/// Print the error message if the parameter is an `Err` value
 fn handle_error(result: Result<(), CustomError>) {
-    match result.unwrap_err() {
-        CustomError::IOError(msg) => eprintln!("{}", msg),
-        CustomError::ParseError(msg) => eprintln!("{}", msg),
+    if let Err(e) = result {
+        match e {
+            CustomError::IOError(msg) => eprintln!("{}", msg),
+            CustomError::ParseError(msg) => eprintln!("{}", msg),
+        }
+        std::process::exit(1)
     }
 }
